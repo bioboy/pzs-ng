@@ -461,7 +461,7 @@ main(int argc, char *argv[])
 			buffer_progress_bar(&g.v);
 			if (g.v.total.files_missing == 0) {
 				complete(&g, complete_type);
-				createstatusbar(convert(&g.v, g.ui, g.gi, zip_completebar));
+				createstatusbar(convert(&g.v, g.ui, g.gi, zip_completebar), &g.v);
 #if (chmod_completebar)
 				if (!matchpath(group_dirs, g.l.path)) {
 					if (chmod_each(convert(&g.v, g.ui, g.gi, zip_completebar), 0222))
@@ -471,7 +471,7 @@ main(int argc, char *argv[])
 
 			} else {
 				if (!matchpath(group_dirs, g.l.path) || create_incomplete_links_in_group_dirs) {
-					if (create_incomplete()) {
+					if (create_incomplete(&g)) {
 						d_log("rescan: create_incomplete() returned something\n");
 					}
 				}
@@ -484,7 +484,7 @@ main(int argc, char *argv[])
 				} else if (matchpath(check_for_missing_nfo_dirs, g.l.path) && (!matchpath(group_dirs, g.l.path) || create_incomplete_links_in_group_dirs)) {
 					if (!g.l.in_cd_dir) {
 						d_log("rescan: Creating missing-nfo indicator %s.\n", g.l.nfo_incomplete);
-						if (create_incomplete_nfo()) {
+						if (create_incomplete_nfo(&g)) {
 							d_log("rescan: create_incomplete_nfo() returned something\n");
 						}
 					} else {
@@ -493,7 +493,7 @@ main(int argc, char *argv[])
 							remove_nfo_indicator(&g);
 						} else {
 							d_log("rescan: Creating missing-nfo indicator (base) %s.\n", g.l.nfo_incomplete);
-							if (create_incomplete_nfo()) {
+							if (create_incomplete_nfo(&g)) {
 								d_log("rescan: create_incomplete_nfo() returned something\n");
 							}
 						}
@@ -697,7 +697,7 @@ main(int argc, char *argv[])
 			} else if (matchpath(check_for_missing_nfo_dirs, g.l.path) && (!matchpath(group_dirs, g.l.path) || create_incomplete_links_in_group_dirs)) {
 				if (!g.l.in_cd_dir) {
 					d_log("rescan: Creating missing-nfo indicator %s.\n", g.l.nfo_incomplete);
-					if (create_incomplete_nfo()) {
+					if (create_incomplete_nfo(&g)) {
 						d_log("rescan: create_incomplete_nfo() returned something\n");
 					}
 				} else {
@@ -712,7 +712,7 @@ main(int argc, char *argv[])
 							*inc_point[0] = '\0';
 						if ((inc_point[1] = find_last_of(g.v.misc.release_name, "/")) != g.v.misc.release_name)
 							*inc_point[1] = '\0';
-						if (create_incomplete_nfo()) {
+						if (create_incomplete_nfo(&g)) {
 							d_log("rescan: create_incomplete_nfo() returned something\n");
 						}
 						if (*inc_point[0] == '\0')
@@ -790,7 +790,7 @@ main(int argc, char *argv[])
 			complete(&g, complete_type);
 
 			if (complete_bar) {
-				createstatusbar(convert(&g.v, g.ui, g.gi, complete_bar));
+				createstatusbar(convert(&g.v, g.ui, g.gi, complete_bar), &g.v);
 #if (chmod_completebar)
 				if (!matchpath(group_dirs, g.l.path)) {
                                         if (chmod_each(convert(&g.v, g.ui, g.gi, complete_bar), 0222))
@@ -810,7 +810,7 @@ main(int argc, char *argv[])
 #endif
 		} else {
 			if (!matchpath(group_dirs, g.l.path) || create_incomplete_links_in_group_dirs) {
-				if (create_incomplete()) {
+				if (create_incomplete(&g)) {
 					d_log("rescan: create_incomplete() returned something\n");
 				}
 			}
@@ -829,7 +829,7 @@ main(int argc, char *argv[])
 						ext++;
 					if (*ext && get_filetype(&g, ext) == 3) {
 						d_log("rescan: Creating missing-sfv indicator %s.\n", g.l.sfv_incomplete);
-						if (create_incomplete_sfv())
+						if (create_incomplete_sfv(&g))
 							d_log("rescan: create_incomplete_sfv() returned something.\n");
 						empty = 0;
 						break;
@@ -839,7 +839,7 @@ main(int argc, char *argv[])
 		}
 #endif
 		if (empty && mark_empty_dirs_as_incomplete_on_rescan) {
-			if (create_incomplete()) {
+			if (create_incomplete(&g)) {
 				d_log("rescan: create_incomplete() returned something\n");
 			}
 			printf(" Empty dir - marking as incomplete.\n");

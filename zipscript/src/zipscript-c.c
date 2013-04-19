@@ -261,7 +261,11 @@ main(int argc, char **argv)
 
 #else /* below here: glftpd specific */
 	d_log("zipscript-c: Reading data from environment variables\n");
-	if ((getenv("USER") == NULL) || (getenv("GROUP") == NULL) || (getenv("TAGLINE") == NULL) || (getenv("SPEED") ==NULL) || (getenv("SECTION") == NULL)) {
+	if ((getenv("USER") == NULL) || (getenv("GROUP") == NULL) || (getenv("TAGLINE") == NULL) || (getenv("SPEED") ==NULL) || (getenv("SECTION") == NULL)
+#if ( ebftpd == TRUE )
+		|| (getenv("UID") == NULL) || (getenv("GID") == NULL)
+#endif
+	) {
 		d_log("zipscript-c: We are running from shell, falling back to default values for $USER, $GROUP, $TAGLINE, $SECTION and $SPEED\n");
 		/*
 		 * strcpy(g.v.user.name, "Unknown");
@@ -278,6 +282,11 @@ main(int argc, char **argv)
 		g.v.file.speed = 2005;
 		g.v.section = 0;
 		sprintf(g.v.sectionname, "DEFAULT");
+
+#if ( ebftpd == TRUE )
+		g.v.user.uid = 0;
+		g.v.user.gid = 0;
+#endif
 	} else {
 		gnum = buffer_groups(GROUPFILE, 0);
 		unum = buffer_users(PASSWDFILE, 0);
@@ -291,6 +300,11 @@ main(int argc, char **argv)
 		g.v.file.speed = strtoul(getenv("SPEED"), NULL, 0);
 		if (!g.v.file.speed)
 			g.v.file.speed = 2005;
+
+#if ( ebftpd == TRUE)
+		g.v.user.uid = strtol(getenv("UID"), NULL, 0);
+		g.v.user.gid = strtol(getenv("GID"), NULL, 0);
+#endif
 
 #if (debug_announce == TRUE)
 		printf("zipscript-c: DEBUG: Speed: %lukb/s (ENV: %skb/s)\n", g.v.file.speed, getenv("SPEED"));
@@ -1145,7 +1159,7 @@ main(int argc, char **argv)
 #if ( create_missing_sfv_link == TRUE )
 				if ((!matchpath(group_dirs, g.l.path) || create_incomplete_links_in_group_dirs) && g.l.sfv_incomplete && !findfileext(dir, ".zip") && !matchpath(nocheck_dirs, g.l.path) && !matchpath(allowed_types_exemption_dirs, g.l.path)) {
 					d_log("zipscript-c: Creating missing-sfv indicator %s.\n", g.l.sfv_incomplete);
-					if (create_incomplete_sfv()) {
+					if (create_incomplete_sfv(&g)) {
 						d_log("zipscript-c: create_incomplete_sfv() returned something.\n");
 					}
 				}
@@ -1638,7 +1652,7 @@ main(int argc, char **argv)
 			if (!matchpath(group_dirs, g.l.path) || create_incomplete_links_in_group_dirs) {
 				d_log("zipscript-c: Creating incomplete indicator:\n", g.l.incomplete);
 				d_log("zipscript-c:    name: '%s', incomplete: '%s', path: '%s'\n", g.v.misc.release_name, g.l.incomplete, g.l.path);
-				if (create_incomplete()) {
+				if (create_incomplete(&g)) {
 					d_log("zipscript-c: create_incomplete() returned something: %s.\n", strerror(errno));
 				}
 			}
@@ -1728,7 +1742,7 @@ main(int argc, char **argv)
 			}
 			if (complete_bar) {
 				d_log("zipscript-c: Creating complete bar\n");
-				createstatusbar(convert(&g.v, g.ui, g.gi, complete_bar));
+				createstatusbar(convert(&g.v, g.ui, g.gi, complete_bar), &g.v);
 #if (chmod_completebar)
 				if (!matchpath(group_dirs, g.l.path)) {
 					if (chmod_each(convert(&g.v, g.ui, g.gi, complete_bar), 0222))
@@ -1779,7 +1793,7 @@ main(int argc, char **argv)
 				if (g.l.nfo_incomplete && matchpath(check_for_missing_nfo_dirs, g.l.path) && !findfileext(dir, ".nfo")) {
 					if (!g.l.in_cd_dir) {
 						d_log("zipscript-c: Creating missing-nfo indicator %s.\n", g.l.nfo_incomplete);
-						if (create_incomplete_nfo()) {
+						if (create_incomplete_nfo(&g)) {
 							d_log("zipscript-c: create_incomplete_nfo() returned something.\n");
 						}
 					} else {
@@ -1790,7 +1804,7 @@ main(int argc, char **argv)
 								*inc_point[0] = '\0';
 							if ((inc_point[1] = find_last_of(g.v.misc.release_name, "/")) != g.v.misc.release_name)
 								*inc_point[1] = '\0';
-							if (create_incomplete_nfo()) {
+							if (create_incomplete_nfo(&g)) {
 								d_log("zipscript-c: create_incomplete_nfo() returned something.\n");
 							}
 							if (*inc_point[0] == '\0')
@@ -1883,6 +1897,8 @@ main(int argc, char **argv)
 		if (execute(target) != 0)
 			d_log("zipscript-c: Failed to execute affil_script: %s\n", strerror(errno));
 	}
+#else
+	(void) affil_upload;
 #endif
 
 #if ( del_banned_release )

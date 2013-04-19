@@ -370,7 +370,7 @@ main(int argc, char **argv)
 		}
 		if (!g.v.total.files_missing) {
 			d_log("postdel: Creating complete bar\n");
-			createstatusbar(convert(&g.v, g.ui, g.gi, zip_completebar));
+			createstatusbar(convert(&g.v, g.ui, g.gi, zip_completebar), &g.v);
 		} else if (g.v.total.files_missing < g.v.total.files) {
 			if (g.v.total.files_missing == 1) {
 				d_log("postdel: Writing INCOMPLETE to %s\n", log);
@@ -438,7 +438,7 @@ main(int argc, char **argv)
 #if ( sfv_cleanup_lowercase == TRUE )
 			strtolower(g.v.file.name);
 #endif
-			create_missing(g.v.file.name);
+			create_missing(g.v.file.name, &g.v);
 #endif
 			d_log("postdel: Reading file count from SFV\n");
 			readsfv(g.l.sfv, &g.v, 0);
@@ -533,7 +533,7 @@ main(int argc, char **argv)
 			} else if (matchpath(check_for_missing_nfo_dirs, g.l.path) && (!matchpath(group_dirs, g.l.path) || create_incomplete_links_in_group_dirs)) {
 				if (!g.l.in_cd_dir) {
 					d_log("postdel: Creating missing-nfo indicator %s.\n", g.l.nfo_incomplete);
-					if (create_incomplete_nfo()) {
+					if (create_incomplete_nfo(&g)) {
 						d_log("postdel: Warning: create_incomplete_nfo() returned something.\n");
 					}
 				} else {
@@ -548,7 +548,7 @@ main(int argc, char **argv)
 							*inc_point[0] = '\0';
 						if ((inc_point[1] = find_last_of(g.v.misc.release_name, "/")) != g.v.misc.release_name)
 							*inc_point[1] = '\0';
-						if (create_incomplete_nfo()) {
+						if (create_incomplete_nfo(&g)) {
 							d_log("postdel: Warning: create_incomplete_nfo() returned something.\n");
 						}
 						if (*inc_point[0] == '\0')
@@ -597,7 +597,7 @@ main(int argc, char **argv)
 		if (!matchpath(group_dirs, g.l.path) || create_incomplete_links_in_group_dirs) {
 			d_log("postdel: Creating incomplete indicator\n");
 			d_log("postdel:    incomplete: '%s', path: '%s'\n", g.l.incomplete, g.l.path);
-			if (create_incomplete()) {
+			if (create_incomplete(&g)) {
 				d_log("postdel: Warning: create_incomplete() returned something.\n");
 			}
 		}

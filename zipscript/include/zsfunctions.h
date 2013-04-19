@@ -82,7 +82,7 @@ extern unsigned int direntries;
 
 extern void	d_log(char *,...);
 
-extern void	create_missing(char *);
+extern void	create_missing(char *, struct VARS*);
 extern char    *findfileext(DIR *, char *);
 extern char    *findfileextsub(DIR *);
 extern char    *findfileextsubp(DIR *);
@@ -135,7 +135,7 @@ extern int	buffer_users(char *, int);
 extern off_t	sfv_compare_size(char *, off_t);
 extern void	mark_as_bad(char *);
 extern int	extractDirname(char *dirname, char *absoluteDirname);
-extern void     createstatusbar(const char *bar);
+extern void     createstatusbar(const char *bar, struct VARS* raceI);
 extern int      chmod_each(const char *list, mode_t mode);
 
 
@@ -159,3 +159,7 @@ extern unsigned int match_lenient(DIR *, char *);
 extern unsigned int insampledir(char *);
 #endif
 
+extern int create_incomplete_sfv(const GLOBAL* g);
+extern int create_incomplete_sample(const GLOBAL* g);
+extern int create_incomplete_nfo(const GLOBAL* g);
+extern int create_incomplete(const GLOBAL* g);

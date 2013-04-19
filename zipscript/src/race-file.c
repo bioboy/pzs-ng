@@ -39,6 +39,9 @@
 # include "strl/strl.h"
 #endif
 
+#if ( ebftpd == TRUE )
+#include "ebftpd.h"
+#endif
 
 /*
  * Modified	: 02.19.2002 Author	: Dark0n3
@@ -300,7 +303,7 @@ testfiles(struct LOCATIONS *locations, struct VARS *raceI, int rstatus)
 			else if ((timenow == filestat.st_ctime) && (filestat.st_mode & 0111)) {
 				d_log("testfiles: Looks like this file (%s) is in the process of being uploaded. Ignoring.\n", rd.fname);
 				rd.status = F_IGNORED;
-				create_missing(rd.fname);
+				create_missing(rd.fname, raceI);
 			}
 		} else if (snprintf(target, sizeof(target), "%s.bad", rd.fname) > 4 && fileexists(target)) {
        	                d_log("testfiles: File doesnt exist (%s), bad version of it does, keeping it marked as bad.\n", rd.fname);
@@ -329,7 +332,7 @@ testfiles(struct LOCATIONS *locations, struct VARS *raceI, int rstatus)
 			}
 #if ( create_missing_files )
 			if (Tcrc != 0)
-				create_missing(rd.fname);
+				create_missing(rd.fname, raceI);
 #endif
 
 #if (enable_unduper_script == TRUE)
@@ -580,7 +583,7 @@ copysfv(const char *source, const char *target, struct VARS *raceI)
 
 #if ( create_missing_files == TRUE )
 				if (!findfile(dir, sd.fname) && !(matchpath(allowed_types_exemption_dirs, raceI->misc.current_path) && strcomp(allowed_types, ptr)))
-					create_missing(sd.fname);
+					create_missing(sd.fname, raceI);
 #endif
 
 				if (write(outfd, &sd, sizeof(SFVDATA)) != sizeof(SFVDATA))
@@ -610,6 +613,11 @@ END:
 		close(tmpfd);
 		unlink(source);
 		rename(".tmpsfv", source);
+#if ( ebftpd == TRUE )
+                if (ebftpd_chown(source, raceI->user.uid, raceI->user.gid) < 0)
+                        d_log("copysfv: ebftpd_chown(%s,%i,%i): %s\n", source, raceI->user.uid, raceI->user.gid, strerror(errno));
+
+#endif
 	}
 #endif
 
@@ -684,6 +692,12 @@ create_indexfile(const char *racefile, struct VARS *raceI, char *f)
 			fprintf(r, "%s\n", fname[m]);
 		}
 		fclose(r);
+                
+#if ( ebftpd == TRUE )
+                if (ebftpd_chown(f, raceI->user.uid, raceI->user.gid) < 0)
+                        d_log("create_indexfile: ebftpd_chown(%s,%i,%i): %s\n", f, raceI->user.uid, raceI->user.gid, strerror(errno));
+
+#endif
 	}
 }
 
@@ -897,7 +911,7 @@ verify_racedata(const char *path, struct VARS *raceI)
 			i++;
 		} else {
 			d_log("verify_racedata: Oops! %s is missing - removing from racedata (ret=%d)\n", rd.fname, ret);
-			create_missing(rd.fname);
+			create_missing(rd.fname, raceI);
 		}
 	}
 

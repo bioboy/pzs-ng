@@ -19,6 +19,10 @@
 #include <strl/strl.h>
 #include <stdarg.h>
 
+#if ( ebftpd == TRUE )
+#include "ebftpd.h"
+#endif
+
 int		num_groups = 0, num_users = 0;
 
 #ifdef USING_GLFTPD
@@ -84,12 +88,17 @@ d_log(char *fmt,...)
  *        Revision: 1218
  */
 void 
-create_missing(char *f)
+create_missing(char *f, struct VARS *raceI)
 {
 	char		fname[NAME_MAX];
 
 	snprintf(fname, NAME_MAX, "%s-missing", f);
 	createzerofile(fname);
+#if ( ebftpd == TRUE )
+        if (ebftpd_chown(fname, raceI->user.uid, raceI->user.gid) < 0)
+                d_log("create_missing: ebftpd_chown(%s,%i,%i): %s\n", fname, raceI->user.uid, raceI->user.gid, strerror(errno));
+
+#endif
 }
 
 /*
@@ -644,7 +653,7 @@ move_progress_bar(unsigned char delete, struct VARS *raceI, struct USERINFO **us
 				}
 				if (!m) {
 					d_log("move_progress_bar: Progress bar could not be moved, creating a new one now!\n");
-					createstatusbar(bar);
+					createstatusbar(bar, raceI);
 				}
 			}
 			closedir(dir);
@@ -1879,7 +1888,7 @@ insampledir(char *dirname)
 }
 
 void
-createstatusbar(const char *bar)
+createstatusbar(const char *bar, struct VARS* raceI)
 {
 #if ( status_bar_type == BAR_OFF )
     (void)bar;
@@ -1897,6 +1906,12 @@ createstatusbar(const char *bar)
 #endif
 #if ( status_bar_type == BAR_DIR )
         mkdir(tmp, 0777);
+#endif
+
+#if ( ebftpd == TRUE )
+                if (ebftpd_chown(tmp, raceI->user.uid, raceI->user.gid) < 0)
+                        d_log("createstatusbar: ebftpd_chown(%s,%i,%i): %s\n", tmp, raceI->user.uid, raceI->user.gid, strerror(errno));
+
 #endif
 
         tmp = strtok(NULL, "\n");
@@ -1925,4 +1940,80 @@ chmod_each(const char *list, mode_t mode)
     free(newlist);
 
     return fail;
+}
+
+int create_incomplete(const GLOBAL* g)
+{
+        int ret;
+#if ( incompleteislink == TRUE )
+#if ( userellink == TRUE )
+        ret = symlink(g->v.misc.release_name, g->l.incomplete);
+#else
+        ret = symlink(g->l.path, g->l.incomplete);
+#endif
+#else
+        ret = createzerofile(g->l.incomplete);
+#if ( ebftpd == TRUE )
+        if (ret != 0 && ebftpd_chown(g->l.incomplete, g->v.user.uid, g->v.user.gid) < 0)
+                d_log("create_incomplete_sfv: ebftpd_chown(%s,%i,%i): %s\n", g->l.incomplete, g->v.user.uid, g->v.user.gid, strerror(errno));
+#endif
+#endif
+	return ret;
+}
+ 
+int create_incomplete_nfo(const GLOBAL* g)
+{
+        int ret;
+#if ( incompleteislink == TRUE )
+#if ( userellink == TRUE )
+        ret = symlink(g->v.misc.release_name, g->l.nfo_incomplete);
+#else
+        ret = symlink(g->l.path, g->l.nfo_incomplete);
+#endif
+#else
+        ret = createzerofile(g->l.nfo_incomplete);
+#if ( ebftpd == TRUE )
+        if (ret != 0 && ebftpd_chown(g->l.nfo_incomplete, g->v.user.uid, g->v.user.gid) < 0)
+                d_log("create_incomplete_sfv: ebftpd_chown(%s,%i,%i): %s\n", g->l.nfo_incomplete, g->v.user.uid, g->v.user.gid, strerror(errno));
+#endif
+#endif
+	return ret;
+}
+
+int create_incomplete_sample(const GLOBAL* g)
+{
+        int ret;
+#if ( incompleteislink == TRUE )
+#if ( userellink == TRUE )
+        ret = symlink(g->v.misc.release_name, g->l.sample_incomplete);
+#else
+        ret = symlink(g->l.path, g->l.sample_incomplete);
+#endif
+#else
+        int ret = createzerofile(g->l.sample_incomplete);
+#if ( ebftpd == TRUE )
+        if (ret != 0 && ebftpd_chown(g->l.sample_incomplete, g->v.user.uid, g->v.user.gid) < 0)
+                d_log("create_incomplete_sfv: ebftpd_chown(%s,%i,%i): %s\n", g->l.sample_incomplete, g->v.user.uid, g->v.user.gid, strerror(errno));
+#endif
+#endif
+	return ret;
+}
+
+int create_incomplete_sfv(const GLOBAL* g)
+{
+        int ret;
+#if ( incompleteislink == TRUE )
+#if ( userellink == TRUE )
+        ret = symlink(g->v.misc.release_name, g->l.sfv_incomplete);
+#else
+        ret = symlink(g->l.path, g->l.sfv_incomplete);
+#endif
+#else
+        ret = createzerofile(g->l.sfv_incomplete);
+#if ( ebftpd == TRUE )
+        if (ret != 0 && ebftpd_chown(g->l.sfv_incomplete, g->v.user.uid, g->v.user.gid) < 0)
+                d_log("create_incomplete_sfv: ebftpd_chown(%s,%i,%i): %s\n", g->l.sfv_incomplete, g->v.user.uid, g->v.user.gid, strerror(errno));
+#endif
+#endif
+	return ret;
 }

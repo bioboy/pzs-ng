@@ -66,3 +66,5 @@
 #define nfo_script                   "/bin/psxc-imdb.sh"
 #define enable_complete_script       FALSE
 #define complete_script              "/bin/nfo_copy.sh"
+
+#define ebftpd                       FALSE
