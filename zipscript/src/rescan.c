@@ -48,8 +48,6 @@ main(int argc, char *argv[])
 	unsigned int	crc;
 	struct stat	fileinfo;
 
-	uid_t		f_uid;
-	gid_t		f_gid;
 	double		temp_time = 0;
 
 	DIR		*dir, *parent;
@@ -233,7 +231,7 @@ main(int argc, char *argv[])
 		snprintf(g.v.sectionname, sizeof(g.v.sectionname), "%s", getenv("SECTION"));
 	}
 #else
-        snprintf(g.v.sectionname, sizeof(g.v.sectionname), argv[4]);
+	strncpy(g.v.sectionname, argv[4], sizeof(g.v.sectionname));
 #endif
 
 	g.l.length_path = (int)strlen(g.l.path);
@@ -377,15 +375,13 @@ main(int argc, char *argv[])
 					ext++;
 				if (!strcasecmp(ext, "zip")) {
 					stat(dp->d_name, &fileinfo);
-					f_uid = fileinfo.st_uid;
-					f_gid = fileinfo.st_gid;
 					if ((timenow == fileinfo.st_ctime) && (fileinfo.st_mode & 0111)) {
 						d_log("rescan.c: Seems this file (%s) is in the process of being uploaded. Ignoring for now.\n", dp->d_name);
 						continue;
 					}
 #ifdef USING_GLFTPD
-					strlcpy(g.v.user.name, get_u_name(f_uid), sizeof(g.v.user.name));
-					strlcpy(g.v.user.group, get_g_name(f_gid), sizeof(g.v.user.group));
+					strlcpy(g.v.user.name, get_u_name(fileinfo.st_uid), sizeof(g.v.user.name));
+					strlcpy(g.v.user.group, get_g_name(fileinfo.st_gid), sizeof(g.v.user.group));
 #else
 					strlcpy(g.v.user.name, argv[1], sizeof(g.v.user.name));
 					strlcpy(g.v.user.group, argv[2], sizeof(g.v.user.group));
@@ -613,12 +609,9 @@ main(int argc, char *argv[])
 				if (ignore_zero_sized_on_rescan && !fileinfo.st_size)
 					continue;
 
-				f_uid = fileinfo.st_uid;
-				f_gid = fileinfo.st_gid;
-
 #ifdef USING_GLFTPD
-				strlcpy(g.v.user.name, get_u_name(f_uid), sizeof(g.v.user.name));
-				strlcpy(g.v.user.group, get_g_name(f_gid), sizeof(g.v.user.group));
+				strlcpy(g.v.user.name, get_u_name(fileinfo.st_uid), sizeof(g.v.user.name));
+				strlcpy(g.v.user.group, get_g_name(fileinfo.st_gid), sizeof(g.v.user.group));
 #else
 				strlcpy(g.v.user.name, argv[1], sizeof(g.v.user.name));
 				strlcpy(g.v.user.group, argv[2], sizeof(g.v.user.group));

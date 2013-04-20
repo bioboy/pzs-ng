@@ -235,11 +235,11 @@ main(int argc, char **argv)
 #ifndef USING_GLFTPD
         d_log("zipscript-c: Reading data from commandline (ftpd-agnostic)\n");
         
-        sprintf(g.v.user.name, argv[3]);
-        sprintf(g.v.user.group, argv[4]);
+        strlcpy(g.v.user.name, argv[3], sizeof(g.v.user.name));
+        strlcpy(g.v.user.group, argv[4], sizeof(g.v.user.group));
         if (!(int)strlen(g.v.user.group))
                 memcpy(g.v.user.group, "NoGroup", 8);
-        sprintf(g.v.user.tagline, argv[5]);
+        strlcpy(g.v.user.tagline, argv[5], sizeof(g.v.user.tagline));
         if (!(int)strlen(g.v.user.tagline))
                 memcpy(g.v.user.tagline, "No Tagline Set", 15);
         g.v.file.speed = strtoul(argv[6], NULL, 0);
@@ -247,7 +247,7 @@ main(int argc, char **argv)
                 g.v.file.speed = 2005;
 
         d_log("zipscript-c: Reading section from arg (%s)\n", argv[7]);
-        snprintf(g.v.sectionname, 127, argv[7]);
+        strlcpy(g.v.sectionname, argv[7], sizeof(g.v.sectionname));
         g.v.section = 0;
 
 #ifdef USING_EBFTPD

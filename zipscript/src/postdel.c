@@ -95,7 +95,8 @@ main(int argc, char **argv)
             fname++;
         }
 
-        chdir(dirname);
+        int ignore = chdir(dirname);
+	(void) ignore;
         d_log("postdel: Got a 'DELE %s' in '%s'\n", fname, dirname);
 #endif
 

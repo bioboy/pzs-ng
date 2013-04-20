@@ -45,8 +45,6 @@ main(int argc, char *argv[])
 	unsigned int	crc;
 	struct stat	fileinfo;
 
-	uid_t		f_uid;
-	gid_t		f_gid;
 	double		temp_time = 0;
 
 	DIR		*dir, *parent;
@@ -152,7 +150,7 @@ main(int argc, char *argv[])
 		snprintf(g.v.sectionname, 127, "%s", getenv("SECTION"));
 	}
 #else
-        snprintf(g.v.sectionname, 127, argv[8]);
+        strlcpy(g.v.sectionname, argv[8], sizeof(g.v.sectionname));
 #endif
 
 	g.l.race = ng_realloc2(g.l.race, n = (int)strlen(g.l.path) + 12 + sizeof(storage), 1, 1, 1);
@@ -254,8 +252,6 @@ main(int argc, char *argv[])
 
 			if (!strcasecmp(ext, "zip")) {
 				stat(dp->d_name, &fileinfo);
-				f_uid = fileinfo.st_uid;
-				f_gid = fileinfo.st_gid;
 
 				if ((timenow == fileinfo.st_ctime) && (fileinfo.st_mode & 0111)) {
 					d_log("ng-post_unnuke: Seems this file (%s) is in the process of being uploaded. Ignoring for now.\n", dp->d_name);
@@ -263,8 +259,8 @@ main(int argc, char *argv[])
 				}
 
 #ifdef USING_GLFTPD
-				strcpy(g.v.user.name, get_u_name(f_uid));
-				strcpy(g.v.user.group, get_g_name(f_gid));
+				strcpy(g.v.user.name, get_u_name(fileinfo.st_uid));
+				strcpy(g.v.user.group, get_g_name(fileinfo.st_gid));
 #else
                                 strncpy(g.v.user.name, argv[4], sizeof(g.v.user.name));
                                 strncpy(g.v.user.group, argv[5], sizeof(g.v.user.group));
@@ -440,12 +436,9 @@ main(int argc, char *argv[])
 				if (ignore_zero_sized_on_rescan && !fileinfo.st_size)
 					continue;
 
-				f_uid = fileinfo.st_uid;
-				f_gid = fileinfo.st_gid;
-
 #ifdef USING_GLFTPD
-				strcpy(g.v.user.name, get_u_name(f_uid));
-				strcpy(g.v.user.group, get_g_name(f_gid));
+				strcpy(g.v.user.name, get_u_name(fileinfo.st_uid));
+				strcpy(g.v.user.group, get_g_name(fileinfo.st_gid));
 #else
                                 strncpy(g.v.user.name, argv[4], sizeof(g.v.user.name));
                                 strncpy(g.v.user.group, argv[5], sizeof(g.v.user.group));
