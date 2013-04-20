@@ -87,6 +87,19 @@ AC_ARG_ENABLE(glftpd-specific,
         [GLFTPD_SPECIFIC="yes"]
 )
 
+dnl ebftpd-specific
+AC_ARG_ENABLE(ebftpd-specific,
+				AS_HELP_STRING([--enable-ebftpd-specific], [Enable ebftpd-specific features, implies --disable-glftpd-specific]),
+				[ if test "x$enableval" = "xyes" ; then
+									EBFTPD_SPECIFIC="yes"
+									GLFTPD_SPECIFIC="no"
+					else
+									EBFTPD_SPECIFIC="$enableval"
+					fi
+				],
+				[EBFTPD_SPECIFIC="no"]
+)
+
 dnl noformat
 NOFORMAT="-D_WITH_NOFORMAT"
 AC_ARG_ENABLE(format, AS_HELP_STRING([--enable-format], [compiles the zipscript to format the output]), NOFORMAT="")
@@ -189,7 +202,12 @@ if [[ "x$GLFTPD_SPECIFIC" = "xyes" ]]; then
     SHOWLOG_INSTALL="showlog-install"
 fi
 
+if [[ "x$EBFTPD_SPECIFIC" = "xyes" ]]; then
+	USING_EBFTPD="-DUSING_EBFTPD=1"
+fi
+
 AC_SUBST(USING_GLFTPD)
+AC_SUBST(USING_EBFTPD)
 AC_SUBST(SITEWHO)
 AC_SUBST(SHOWLOG)
 AC_SUBST(SHOWLOG_INSTALL)
@@ -209,7 +227,9 @@ AC_CONFIG_FILES([Makefile zipscript/src/Makefile zipscript/utils/Makefile sitebo
 AC_OUTPUT
 
 if [[ ! -f zipscript/conf/zsconfig.h ]]; then
-    if [[ "x$USING_GLFTPD" == "x" ]]; then
+    if [[ "x$USING_EBFTPD" != "x" ]]; then
+         cp -i zipscript/conf/zsconfig.h.dist-ebftpd zipscript/conf/zsconfig.h
+    elif [[ "x$USING_GLFTPD" == "x" ]]; then
         cp -i zipscript/conf/zsconfig.h.dist-nonglftpd zipscript/conf/zsconfig.h
     else
         cp -i zipscript/conf/zsconfig.h.dist zipscript/conf/zsconfig.h
@@ -243,8 +263,11 @@ all config options for the sitewho binary.
 
 When done type 'make' to compile.
 "
+elif [[ "x$EBFTPD_SPECIFIC" = "xyes" ]]; then
+RESULT="You are compiling in ebftpd support mode, this means
+that all the glftpd-specific features have been disabled. Good luck!"
 else
-RESULT="You've compiled pzs-ng in "ftpd-agnostic" mode, this means
+RESULT="You are compiling pzs-ng in "ftpd-agnostic" mode, this means
 that all glftpd-specific features have been disabled. Good luck!
 "
 fi

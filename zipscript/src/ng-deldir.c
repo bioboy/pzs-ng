@@ -24,14 +24,14 @@
 #endif
 
 /* Force structure alignment to 4 bytes (for 64bit support). */
-#if ( GLVERSION != 20164 )
+#if defined(GLVERSION) && ( GLVERSION != 20164 )
 #pragma pack(push, 4)
 #endif
 
 /* 32-bit time values (for 64bit support). */
 typedef int32_t time32_t;
 
-#if ( GLVERSION == 13232 )
+#if defined(GLVERSION) && ( GLVERSION == 13232 )
 struct dirlog {
     uint16_t    status;          /* 0 = NEWDIR, 1 = NUKE, 2 = UNNUKE, 3 = DELETED */
     time32_t    uptime;          /* Creation time since epoch (man 2 time) */
@@ -42,7 +42,7 @@ struct dirlog {
     char        dirname[255];    /* The name of the dir (fullpath) */
     char        dummy[8];        /* Unused, kept for compatibility reasons */
 } __attribute__((deprecated));
-#elif ( GLVERSION == 20164 )
+#elif defined(GLVERSION) && ( GLVERSION == 20164 )
 struct dirlog {
     ushort      status;          /* 0 = NEWDIR, 1 = NUKE, 2 = UNNUKE, 3 = DELETED */
     time_t      uptime;          /* Creation time since epoch (man 2 time) */
@@ -69,7 +69,7 @@ struct dirlog {
 #endif
 
 /* Restore default structure alignment for non-critical structures. */
-#if ( GLVERSION != 20164 )
+#if defined(GLVERSION) && ( GLVERSION != 20164 )
 #pragma pack(pop)
 #endif
 

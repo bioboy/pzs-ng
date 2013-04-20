@@ -54,6 +54,7 @@ void audioSortDir(char *targetDir)
 	audioSort(&info, link_source, link_target);
 
 	closedir(ourDir);
+	(void) cnt;
 }
 
 void audioSort(struct audio *info, char *link_source, char *link_target)

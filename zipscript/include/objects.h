@@ -101,7 +101,7 @@ struct current_user {
 	char		group     [24];
 	char		tagline   [255];
 	short int	pos;
-#if ( ebftpd == TRUE )
+#ifdef USING_EBFTPD
 	int32_t		uid;
 	int32_t		gid;
 #endif

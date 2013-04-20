@@ -30,14 +30,14 @@
 #endif
 
 /* Force structure alignment to 4 bytes (for 64bit support). */
-#if ( GLVERSION != 20164 )
+#if defined(GLVERSION) && ( GLVERSION != 20164 )
 #pragma pack(push, 4)
 #endif
 
 /* 32-bit time values (for 64bit support). */
 typedef int32_t time32_t;
 
-#if ( GLVERSION == 20164 )
+#if defined(GLVERSION) && ( GLVERSION == 20164 )
 struct dupeentry {
 	char		filename[256];
 	time_t		timeup;
@@ -52,7 +52,7 @@ struct dupeentry {
 #endif
 
 /* Restore default structure alignment for non-critical structures. */
-#if ( GLVERSION != 20164 )
+#if defined(GLVERSION) && ( GLVERSION != 20164 )
 #pragma pack(pop)
 #endif
 

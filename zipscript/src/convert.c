@@ -456,6 +456,7 @@ convert_sitename(char *instr)
 			*out_p++ = *instr;
 	*out_p = 0;
 	return output2;
+	(void) val2;
 }
 
 

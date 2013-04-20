@@ -19,7 +19,7 @@
 #include <strl/strl.h>
 #include <stdarg.h>
 
-#if ( ebftpd == TRUE )
+#ifdef USING_EBFTPD
 #include "ebftpd.h"
 #endif
 
@@ -94,7 +94,7 @@ create_missing(char *f, struct VARS *raceI)
 
 	snprintf(fname, NAME_MAX, "%s-missing", f);
 	createzerofile(fname);
-#if ( ebftpd == TRUE )
+#ifdef USING_EBFTPD
         if (ebftpd_chown(fname, raceI->user.uid, raceI->user.gid) < 0)
                 d_log("create_missing: ebftpd_chown(%s,%i,%i): %s\n", fname, raceI->user.uid, raceI->user.gid, strerror(errno));
 
@@ -1902,16 +1902,15 @@ createstatusbar(const char *bar, struct VARS* raceI)
     {
 /* Creates status bar file */
 #if ( status_bar_type == BAR_FILE )
-        createzerofile(tmp);
+	createzerofile(tmp);
 #endif
 #if ( status_bar_type == BAR_DIR )
         mkdir(tmp, 0777);
 #endif
 
-#if ( ebftpd == TRUE )
-                if (ebftpd_chown(tmp, raceI->user.uid, raceI->user.gid) < 0)
-                        d_log("createstatusbar: ebftpd_chown(%s,%i,%i): %s\n", tmp, raceI->user.uid, raceI->user.gid, strerror(errno));
-
+#ifdef USING_EBFTPD
+	if (ebftpd_chown(tmp, raceI->user.uid, raceI->user.gid) < 0)
+		d_log("createstatusbar: ebftpd_chown(%s,%i,%i): %s\n", tmp, raceI->user.uid, raceI->user.gid, strerror(errno));
 #endif
 
         tmp = strtok(NULL, "\n");
@@ -1953,7 +1952,7 @@ int create_incomplete(const GLOBAL* g)
 #endif
 #else
         ret = createzerofile(g->l.incomplete);
-#if ( ebftpd == TRUE )
+#ifdef USING_EBFTPD
         if (ret != 0 && ebftpd_chown(g->l.incomplete, g->v.user.uid, g->v.user.gid) < 0)
                 d_log("create_incomplete_sfv: ebftpd_chown(%s,%i,%i): %s\n", g->l.incomplete, g->v.user.uid, g->v.user.gid, strerror(errno));
 #endif
@@ -1972,7 +1971,7 @@ int create_incomplete_nfo(const GLOBAL* g)
 #endif
 #else
         ret = createzerofile(g->l.nfo_incomplete);
-#if ( ebftpd == TRUE )
+#ifdef USING_EBFTPD
         if (ret != 0 && ebftpd_chown(g->l.nfo_incomplete, g->v.user.uid, g->v.user.gid) < 0)
                 d_log("create_incomplete_sfv: ebftpd_chown(%s,%i,%i): %s\n", g->l.nfo_incomplete, g->v.user.uid, g->v.user.gid, strerror(errno));
 #endif
@@ -1991,7 +1990,7 @@ int create_incomplete_sample(const GLOBAL* g)
 #endif
 #else
         int ret = createzerofile(g->l.sample_incomplete);
-#if ( ebftpd == TRUE )
+#ifdef USING_EBFTPD
         if (ret != 0 && ebftpd_chown(g->l.sample_incomplete, g->v.user.uid, g->v.user.gid) < 0)
                 d_log("create_incomplete_sfv: ebftpd_chown(%s,%i,%i): %s\n", g->l.sample_incomplete, g->v.user.uid, g->v.user.gid, strerror(errno));
 #endif
@@ -2010,7 +2009,7 @@ int create_incomplete_sfv(const GLOBAL* g)
 #endif
 #else
         ret = createzerofile(g->l.sfv_incomplete);
-#if ( ebftpd == TRUE )
+#ifdef USING_EBFTPD
         if (ret != 0 && ebftpd_chown(g->l.sfv_incomplete, g->v.user.uid, g->v.user.gid) < 0)
                 d_log("create_incomplete_sfv: ebftpd_chown(%s,%i,%i): %s\n", g->l.sfv_incomplete, g->v.user.uid, g->v.user.gid, strerror(errno));
 #endif

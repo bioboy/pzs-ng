@@ -166,6 +166,15 @@ main(int argc, char **argv)
 	}
         crc_arg = argv[3];
 #else
+#ifdef USING_EBFTPD
+	if (argc < 10) {
+		d_log("zipscript-c: Wrong number of arguments used (ebftpd-mode)\n");
+		printf(" - - PZS-NG ZipScript-C %s - -\n\nUsage: %s <absolute filepath> <crc> <user> <group> <tagline> <speed> <section> <uid> <gid>\n", ng_version, argv[0]);
+		printf(" Usage: %s --(full)config - shows (full) config compiled.\n\n", argv[0]);
+		exit(1);
+	}
+        crc_arg = argv[2];	
+#else
 	if (argc < 8) {
 		d_log("zipscript-c: Wrong number of arguments used (ftpd-agnostic)\n");
 		printf(" - - PZS-NG ZipScript-C %s - -\n\nUsage: %s <absolute filepath> <crc> <user> <group> <tagline> <speed> <section>\n", ng_version, argv[0]);
@@ -173,6 +182,7 @@ main(int argc, char **argv)
 		exit(1);
 	}
         crc_arg = argv[2];
+#endif
 #endif
 
 	d_log("zipscript-c: Clearing arrays\n");
@@ -240,6 +250,11 @@ main(int argc, char **argv)
         snprintf(g.v.sectionname, 127, argv[7]);
         g.v.section = 0;
 
+#ifdef USING_EBFTPD
+	g.v.user.uid = strtol(argv[8], NULL, 0);
+	g.v.user.gid = strtol(argv[9], NULL, 0);
+#endif
+
         /* XXX We need a better way to handle this. wzd supports sections too.. ;-)
          * (But without userfile reading etc, it's all futile!) */
 #if 0
@@ -261,11 +276,7 @@ main(int argc, char **argv)
 
 #else /* below here: glftpd specific */
 	d_log("zipscript-c: Reading data from environment variables\n");
-	if ((getenv("USER") == NULL) || (getenv("GROUP") == NULL) || (getenv("TAGLINE") == NULL) || (getenv("SPEED") ==NULL) || (getenv("SECTION") == NULL)
-#if ( ebftpd == TRUE )
-		|| (getenv("UID") == NULL) || (getenv("GID") == NULL)
-#endif
-	) {
+	if ((getenv("USER") == NULL) || (getenv("GROUP") == NULL) || (getenv("TAGLINE") == NULL) || (getenv("SPEED") ==NULL) || (getenv("SECTION") == NULL)) {
 		d_log("zipscript-c: We are running from shell, falling back to default values for $USER, $GROUP, $TAGLINE, $SECTION and $SPEED\n");
 		/*
 		 * strcpy(g.v.user.name, "Unknown");
@@ -282,11 +293,6 @@ main(int argc, char **argv)
 		g.v.file.speed = 2005;
 		g.v.section = 0;
 		sprintf(g.v.sectionname, "DEFAULT");
-
-#if ( ebftpd == TRUE )
-		g.v.user.uid = 0;
-		g.v.user.gid = 0;
-#endif
 	} else {
 		gnum = buffer_groups(GROUPFILE, 0);
 		unum = buffer_users(PASSWDFILE, 0);
@@ -300,11 +306,6 @@ main(int argc, char **argv)
 		g.v.file.speed = strtoul(getenv("SPEED"), NULL, 0);
 		if (!g.v.file.speed)
 			g.v.file.speed = 2005;
-
-#if ( ebftpd == TRUE)
-		g.v.user.uid = strtol(getenv("UID"), NULL, 0);
-		g.v.user.gid = strtol(getenv("GID"), NULL, 0);
-#endif
 
 #if (debug_announce == TRUE)
 		printf("zipscript-c: DEBUG: Speed: %lukb/s (ENV: %skb/s)\n", g.v.file.speed, getenv("SPEED"));

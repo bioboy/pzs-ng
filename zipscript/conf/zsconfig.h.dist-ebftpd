@@ -1,0 +1,78 @@
+/* zsconfig.h - ZipScript-C config file
+ *
+ * This file only contains overrides of the defaults. If you need to edit/change
+ * other options, please copy the option from README.ZSCONFIG and place it in
+ * here.
+ * The complete list of options availible is found in README.ZSCONFIG.
+ *
+ * Please do not change settings you do not understand!
+ *
+ * The hash char ``#'' does not signify comments! DO NOT REMOVE!
+ */
+
+
+/* DO NOT USE WILDCARDS HERE! */
+#define sitepath_dir                 "/ebftpd/site/"
+#define group_dirs                   "/ebftpd/site/groups/"
+#define zip_dirs                     "/ebftpd/site/test/ /ebftpd/site/incoming/0day/"
+#define sfv_dirs                     "/ebftpd/site/test/ /ebftpd/site/incoming/mp3/ /ebftpd/site/incoming/games/ /ebftpd/site/incoming/apps/ /ebftpd/site/incoming/musicvideos/ /ebftpd/site/incoming/requests/"
+#define nocheck_dirs                 "/ebftpd/site/private/"
+#define noforce_sfv_first_dirs       "/ebftpd/site/incoming/requests/"
+#define audio_nocheck_dirs           "/ebftpd/site/groups/ /ebftpd/site/incoming/requests/"
+#define allowed_types_exemption_dirs "/ebftpd/site/incoming/musicvideos/"
+#define check_for_missing_nfo_dirs   "/ebftpd/site/incoming/games/ /ebftpd/site/incoming/apps/"
+#define cleanupdirs                  "/ebftpd/site/test/ /ebftpd/site/incoming/games/ /ebftpd/site/incoming/apps/ /ebftpd/site/incoming/musicvideos/"
+#define cleanupdirs_dated            "/ebftpd/site/incoming/0day/%m%d/ /ebftpd/site/incoming/mp3/%m%d/"
+
+#define short_sitename               "NG"
+
+#define debug_mode                   FALSE
+#define debug_altlog                 TRUE
+
+#define status_bar_type              BAR_DIR
+#define incompleteislink             TRUE
+
+#define ignored_types                ",diz,debug,message,imdb,html,url,m3u,metadata"
+
+#define deny_double_sfv              FALSE
+#define force_sfv_first              FALSE
+
+#define audio_genre_path             "/ebftpd/site/incoming/music.by.genre/"
+#define audio_artist_path            "/ebftpd/site/incoming/music.by.artist/"
+#define audio_year_path              "/ebftpd/site/incoming/music.by.year/"
+#define audio_group_path             "/ebftpd/site/incoming/music.by.group/"
+#define audio_language_path          "/ebftpd/site/incoming/music.by.language/"
+#define allowed_constant_bitrates    "160,192"
+#define allowed_years                "2007,2008,2009,2010,2011,2012"
+#define banned_genres                "Christian Rap,Christian Gangsta Rap,Contemporary Christian,Christian Rock"
+#define allowed_genres               "Top 40,Pop Funk,Rock,Pop"
+#define audio_genre_sort             FALSE
+#define audio_year_sort              FALSE
+#define audio_artist_sort            FALSE
+#define audio_group_sort             FALSE
+#define audio_language_sort          FALSE
+#define audio_cbr_check              TRUE
+#define audio_cbr_warn               TRUE
+#define audio_year_check             TRUE
+#define audio_year_warn              TRUE
+#define audio_banned_genre_check     TRUE
+#define audio_allowed_genre_check    FALSE
+#define audio_genre_warn             TRUE
+
+#define enable_nfo_script            FALSE
+#define nfo_script                   "/bin/psxc-imdb.sh"
+#define enable_complete_script       FALSE
+#define complete_script              "/bin/nfo_copy.sh"
+
+/* These are settings that are especially relevant when you're not running under glftpd.
+ * Make sure that all paths are absolute and _real_, e.g. set log to /home/myuser/wzd/var/log/wzdftpd/wzd.log 
+ *
+ * You should probably also create these two first dirs using:
+ *  mkdir -p -m777 /home/myuser/wzd/var/lib/pzs-ng */
+
+#define log                          "/ebftpd/data/logs/events.log"
+#define storage                      "/ebftpd/data/pzs-ng/"
+#define banned_filelist              "/ebftpd/data/etc/banned_files.txt"
+
+#define zip_bin                      "/bin/zip"
+#define unzip_bin                    "/bin/unzip"

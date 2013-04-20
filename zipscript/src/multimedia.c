@@ -518,6 +518,7 @@ get_mpeg_audio_info(char *f, struct audio *audio)
 	d_log("multimedia.c: get_mpeg_audio_info() - values: is_vbr: %d, vbr_oldnew: %d, vbr_quality: %d, vbr_minimum_bitrate: %d, vbr_noiseshaping: %d\n",
 			audio->is_vbr, audio->vbr_oldnew, audio->vbr_quality, audio->vbr_minimum_bitrate, audio->vbr_noiseshaping);
 	d_log("multimedia.c: get_mpeg_audio_info() - values: vbr_stereo_mode: %s, vbr_unwise: %s, vbr_source: %s\n", audio->vbr_stereo_mode, audio->vbr_unwise, audio->vbr_source);
+	(void) protected;
 }
 
 /*

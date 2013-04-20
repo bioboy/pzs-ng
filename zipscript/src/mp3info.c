@@ -273,6 +273,7 @@ get_id3(mp3info * mp3, struct audio *audio)
 		}
 	}
 	return retcode;
+	(void)ignore;
 }
 
 /* Remove trailing whitespace from the end of a string */

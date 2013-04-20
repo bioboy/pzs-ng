@@ -1,5 +1,3 @@
-
-#include <stdint.h>
 #include <stdio.h>
 
 #if defined(__FreeBSD__)
@@ -7,6 +5,8 @@
 #else
 # include <sys/xattr.h>
 #endif
+
+#include "ebftpd.h"
 
 #ifndef ENOATTR
 # define ENOATTR ENODATA

@@ -646,4 +646,5 @@ main(int argc, char *argv[])
 #endif
 
 	exit(0);
+	(void) m;
 }

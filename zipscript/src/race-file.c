@@ -39,7 +39,7 @@
 # include "strl/strl.h"
 #endif
 
-#if ( ebftpd == TRUE )
+#ifdef USING_EBFTPD
 #include "ebftpd.h"
 #endif
 
@@ -613,7 +613,7 @@ END:
 		close(tmpfd);
 		unlink(source);
 		rename(".tmpsfv", source);
-#if ( ebftpd == TRUE )
+#ifdef USING_EBFTPD
                 if (ebftpd_chown(source, raceI->user.uid, raceI->user.gid) < 0)
                         d_log("copysfv: ebftpd_chown(%s,%i,%i): %s\n", source, raceI->user.uid, raceI->user.gid, strerror(errno));
 
@@ -693,7 +693,7 @@ create_indexfile(const char *racefile, struct VARS *raceI, char *f)
 		}
 		fclose(r);
                 
-#if ( ebftpd == TRUE )
+#ifdef USING_EBFTPD
                 if (ebftpd_chown(f, raceI->user.uid, raceI->user.gid) < 0)
                         d_log("create_indexfile: ebftpd_chown(%s,%i,%i): %s\n", f, raceI->user.uid, raceI->user.gid, strerror(errno));
 
