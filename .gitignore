@@ -28,3 +28,4 @@ Makefile
 /zipscript/src/racestats
 /zipscript/src/rescan
 /zipscript/src/zipscript-c
+/autom4te.cache

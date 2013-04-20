@@ -4462,6 +4462,8 @@ else
   INSTALLPATH="/glftpd"
 fi
 
+else
+	INSTALLPATH=`echo $INSTALLPATH | sed 's,/\$,,'`
 fi
 
 if [ "x$GLFTPD_SPECIFIC" = "xyes" ]; then
@@ -5850,6 +5852,7 @@ fi
 if [ ! -f zipscript/conf/zsconfig.h ]; then
     if [ "x$USING_EBFTPD" != "x" ]; then
          cp -i zipscript/conf/zsconfig.h.dist-ebftpd zipscript/conf/zsconfig.h
+				 sed -i s,%INSTALLPATH%,$INSTALLPATH,g zipscript/conf/zsconfig.h
     elif [ "x$USING_GLFTPD" == "x" ]; then
         cp -i zipscript/conf/zsconfig.h.dist-nonglftpd zipscript/conf/zsconfig.h
     else

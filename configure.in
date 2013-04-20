@@ -11,7 +11,7 @@ dnl Checks for programs.
 AC_PROG_CC
 
 if [[ "$CC" = "gcc" ]]; then
-	CFLAGS="$CFLAGS -W -Wall -Wundef -Wshadow -Wpointer-arith -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wnested-externs -Winline"
+  CFLAGS="$CFLAGS -W -Wall -Wundef -Wshadow -Wpointer-arith -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wnested-externs -Winline"
 fi
 
 AC_CHECK_PROG(GREP, grep, grep)
@@ -34,15 +34,15 @@ if [[ -z "$MAKE" ]]; then AC_MSG_ERROR([Couldn't find make, quitting!]); fi
 dnl Checks for libraries.
 LCRYPT=""; PASSCHK=""
 if [[ $(uname -s) != "OpenBSD" ]]; then
-	#AC_CHECK_LIB(crypt, crypt, LCRYPT="-lcrypt", AC_MSG_ERROR([[Couldn't find libcrypt, quitting!]]))
-	AC_CHECK_LIB(crypt, crypt, LCRYPT="-lcrypt")
+  #AC_CHECK_LIB(crypt, crypt, LCRYPT="-lcrypt", AC_MSG_ERROR([[Couldn't find libcrypt, quitting!]]))
+  AC_CHECK_LIB(crypt, crypt, LCRYPT="-lcrypt")
 fi
 
 AH_TEMPLATE([PZSNG_SSL_EXT], [Define to 1 to if you have the required SSL-libs in place])
 PZSNG_SSL
 if [[ -n "$SSL_LIBS" ]]; then
-	PASSCHK="passchk"
-	PASSCHK2="passchk-install"
+  PASSCHK="passchk"
+  PASSCHK2="passchk-install"
 fi
 
 dnl Checks for header files.
@@ -64,20 +64,20 @@ dnl Features
 dnl OS :)
 
 case $host in
-	*-solaris*)
-		CFLAGS="$CFLAGS -D_SunOS_"
-		SUNOBJS="strsep.o scandir.o"
-		;;
-	*bsd*|*darwin*)	
-		CFLAGS="$CFLAGS -D_BSD_"
-		;;
+  *-solaris*)
+    CFLAGS="$CFLAGS -D_SunOS_"
+    SUNOBJS="strsep.o scandir.o"
+    ;;
+  *bsd*|*darwin*)  
+    CFLAGS="$CFLAGS -D_BSD_"
+    ;;
 esac
 
 dnl sitestat5
 AC_ARG_ENABLE(ss5, AS_HELP_STRING([--enable-ss5], [compiles the zipscript for use with SiteStat 5]), [
-	CFLAGS="$CFLAGS -D_WITH_SS5"
-	! [[ -f zipscript/conf/zsconfig.h ]] && cp -i zipscript/conf/zsconfig.h.ss5.dist zipscript/conf/zsconfig.h
-	]
+  CFLAGS="$CFLAGS -D_WITH_SS5"
+  ! [[ -f zipscript/conf/zsconfig.h ]] && cp -i zipscript/conf/zsconfig.h.ss5.dist zipscript/conf/zsconfig.h
+  ]
 )
 
 dnl glftpd-specific
@@ -89,15 +89,15 @@ AC_ARG_ENABLE(glftpd-specific,
 
 dnl ebftpd-specific
 AC_ARG_ENABLE(ebftpd-specific,
-				AS_HELP_STRING([--enable-ebftpd-specific], [Enable ebftpd-specific features, implies --disable-glftpd-specific]),
-				[ if test "x$enableval" = "xyes" ; then
-									EBFTPD_SPECIFIC="yes"
-									GLFTPD_SPECIFIC="no"
-					else
-									EBFTPD_SPECIFIC="$enableval"
-					fi
-				],
-				[EBFTPD_SPECIFIC="no"]
+        AS_HELP_STRING([--enable-ebftpd-specific], [Enable ebftpd-specific features, implies --disable-glftpd-specific]),
+        [ if test "x$enableval" = "xyes" ; then
+                  EBFTPD_SPECIFIC="yes"
+                  GLFTPD_SPECIFIC="no"
+          else
+                  EBFTPD_SPECIFIC="$enableval"
+          fi
+        ],
+        [EBFTPD_SPECIFIC="no"]
 )
 
 dnl noformat
@@ -106,8 +106,8 @@ AC_ARG_ENABLE(format, AS_HELP_STRING([--enable-format], [compiles the zipscript 
 
 dnl expert
 AC_ARG_ENABLE(expert, AS_HELP_STRING([--enable-expert], [expert mode - uses full config]), [
-	! [[ -f zipscript/conf/zsconfig.h ]] && cp -i zipscript/conf/zsconfig.h.complete zipscript/conf/zsconfig.h
-	]
+  ! [[ -f zipscript/conf/zsconfig.h ]] && cp -i zipscript/conf/zsconfig.h.complete zipscript/conf/zsconfig.h
+  ]
 )
 
 dnl altwho
@@ -145,6 +145,8 @@ if [[ "x$INSTALLPATH" = "x" ]]; then
                 AS_HELP_STRING([--with-glpath=PATH],
                                [specify nondefault path to install software (/glftpd per default) (USE --with-install-path INSTEAD!)]),
                 INSTALLPATH="$withval", INSTALLPATH="/glftpd")
+else
+  INSTALLPATH=`echo $INSTALLPATH | sed 's,/\$,,'`
 fi
 
 dnl GL version =)
@@ -203,7 +205,7 @@ if [[ "x$GLFTPD_SPECIFIC" = "xyes" ]]; then
 fi
 
 if [[ "x$EBFTPD_SPECIFIC" = "xyes" ]]; then
-	USING_EBFTPD="-DUSING_EBFTPD=1"
+  USING_EBFTPD="-DUSING_EBFTPD=1"
 fi
 
 AC_SUBST(USING_GLFTPD)
@@ -229,6 +231,7 @@ AC_OUTPUT
 if [[ ! -f zipscript/conf/zsconfig.h ]]; then
     if [[ "x$USING_EBFTPD" != "x" ]]; then
          cp -i zipscript/conf/zsconfig.h.dist-ebftpd zipscript/conf/zsconfig.h
+         sed -i s,%INSTALLPATH%,$INSTALLPATH,g zipscript/conf/zsconfig.h
     elif [[ "x$USING_GLFTPD" == "x" ]]; then
         cp -i zipscript/conf/zsconfig.h.dist-nonglftpd zipscript/conf/zsconfig.h
     else
