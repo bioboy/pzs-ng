@@ -1,20 +1,16 @@
 #include <stdio.h>
 
-#if defined(__FreeBSD__)
+#include "config.h"
+
+#if defined(HAVE_SYS_XATTR_H)
+# include <sys/xattr.h>
+#elif defined(HAVE_SYS_EXTATTR_H)
 # include <sys/extattr.h>
 #else
-# include <sys/xattr.h>
+# error "Unable to find extended attributes header"
 #endif
 
 #include "ebftpd.h"
-
-#ifndef ENOATTR
-# define ENOATTR ENODATA
-#endif
-
-#ifndef ENODATA
-# define ENODATA ENOATTR
-#endif
 
 #define EBFTPD_UID_ATTR_NAME "user.ebftpd.uid"
 #define EBFTPD_GID_ATTR_NAME "user.ebftpd.gid"

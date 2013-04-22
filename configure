@@ -640,6 +640,7 @@ SSL_INCLUDE
 SSL_LIBS
 EGREP
 CPP
+SED
 MAKE
 INSTALL
 FILE
@@ -3060,7 +3061,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 if [ "$CC" = "gcc" ]; then
-	CFLAGS="$CFLAGS -W -Wall -Wundef -Wshadow -Wpointer-arith -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wnested-externs -Winline"
+  CFLAGS="$CFLAGS -W -Wall -Wundef -Wshadow -Wpointer-arith -Wcast-align -Wstrict-prototypes -Wmissing-prototypes -Wnested-externs -Winline"
 fi
 
 # Extract the first word of "grep", so it can be a program name with args.
@@ -3367,10 +3368,48 @@ fi
 
 
 if [ -z "$MAKE" ]; then as_fn_error $? "Couldn't find make, quitting!" "$LINENO" 5; fi
+# Extract the first word of "sed", so it can be a program name with args.
+set dummy sed; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_SED+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$SED"; then
+  ac_cv_prog_SED="$SED" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_SED="sed"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+SED=$ac_cv_prog_SED
+if test -n "$SED"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $SED" >&5
+$as_echo "$SED" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+if [ -z "$SED" ]; then as_fn_error $? "Counldn't find sed, quitting!" "$LINENO" 5; fi
 
 LCRYPT=""; PASSCHK=""
 if [ $(uname -s) != "OpenBSD" ]; then
-	#AC_CHECK_LIB(crypt, crypt, LCRYPT="-lcrypt", AC_MSG_ERROR([[Couldn't find libcrypt, quitting!]]))
+  #AC_CHECK_LIB(crypt, crypt, LCRYPT="-lcrypt", AC_MSG_ERROR([[Couldn't find libcrypt, quitting!]]))
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for crypt in -lcrypt" >&5
 $as_echo_n "checking for crypt in -lcrypt... " >&6; }
@@ -3970,8 +4009,8 @@ done
 
 
 if [ -n "$SSL_LIBS" ]; then
-	PASSCHK="passchk"
-	PASSCHK2="passchk-install"
+  PASSCHK="passchk"
+  PASSCHK2="passchk-install"
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether time.h and sys/time.h may both be included" >&5
@@ -4334,20 +4373,20 @@ fi
 
 
 case $host in
-	*-solaris*)
-		CFLAGS="$CFLAGS -D_SunOS_"
-		SUNOBJS="strsep.o scandir.o"
-		;;
-	*bsd*|*darwin*)
-		CFLAGS="$CFLAGS -D_BSD_"
-		;;
+  *-solaris*)
+    CFLAGS="$CFLAGS -D_SunOS_"
+    SUNOBJS="strsep.o scandir.o"
+    ;;
+  *bsd*|*darwin*)
+    CFLAGS="$CFLAGS -D_BSD_"
+    ;;
 esac
 
 # Check whether --enable-ss5 was given.
 if test "${enable_ss5+set}" = set; then :
   enableval=$enable_ss5;
-	CFLAGS="$CFLAGS -D_WITH_SS5"
-	! [ -f zipscript/conf/zsconfig.h ] && cp -i zipscript/conf/zsconfig.h.ss5.dist zipscript/conf/zsconfig.h
+  CFLAGS="$CFLAGS -D_WITH_SS5"
+  ! [ -f zipscript/conf/zsconfig.h ] && cp -i zipscript/conf/zsconfig.h.ss5.dist zipscript/conf/zsconfig.h
 
 
 fi
@@ -4365,11 +4404,11 @@ fi
 # Check whether --enable-ebftpd-specific was given.
 if test "${enable_ebftpd_specific+set}" = set; then :
   enableval=$enable_ebftpd_specific;  if test "x$enableval" = "xyes" ; then
-									EBFTPD_SPECIFIC="yes"
-									GLFTPD_SPECIFIC="no"
-					else
-									EBFTPD_SPECIFIC="$enableval"
-					fi
+                  EBFTPD_SPECIFIC="yes"
+                  GLFTPD_SPECIFIC="no"
+          else
+                  EBFTPD_SPECIFIC="$enableval"
+          fi
 
 else
   EBFTPD_SPECIFIC="no"
@@ -4387,7 +4426,7 @@ fi
 # Check whether --enable-expert was given.
 if test "${enable_expert+set}" = set; then :
   enableval=$enable_expert;
-	! [ -f zipscript/conf/zsconfig.h ] && cp -i zipscript/conf/zsconfig.h.complete zipscript/conf/zsconfig.h
+  ! [ -f zipscript/conf/zsconfig.h ] && cp -i zipscript/conf/zsconfig.h.complete zipscript/conf/zsconfig.h
 
 
 fi
@@ -4434,6 +4473,43 @@ done
 
 fi
 
+if test "x$EBFTPD_SPECIFIC" == "xyes"; then :
+
+	for ac_header in sys/xattr.h
+do :
+  ac_fn_c_check_header_mongrel "$LINENO" "sys/xattr.h" "ac_cv_header_sys_xattr_h" "$ac_includes_default"
+if test "x$ac_cv_header_sys_xattr_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_SYS_XATTR_H 1
+_ACEOF
+ HAVE_XATTR=yes
+else
+  HAVE_XATTR=no
+fi
+
+done
+
+	for ac_header in sys/extattr.h
+do :
+  ac_fn_c_check_header_mongrel "$LINENO" "sys/extattr.h" "ac_cv_header_sys_extattr_h" "$ac_includes_default"
+if test "x$ac_cv_header_sys_extattr_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_SYS_EXTATTR_H 1
+_ACEOF
+ HAVE_EXTATTR=yes
+else
+  HAVE_EXTATTR=no
+fi
+
+done
+
+
+	if [ "x$HAVE_XATTR" = "xno" ] && [ "x$HAVE_EXTATTR" = "xno" ]; then
+		as_fn_error $? "Couldn't find header for extended filesystem attributes. Required for ebftpd support." "$LINENO" 5
+	fi
+
+fi
+
 # Check whether --enable-static was given.
 if test "${enable_static+set}" = set; then :
   enableval=$enable_static; CFLAGS="$CFLAGS -static"; static="yes"
@@ -4463,7 +4539,7 @@ else
 fi
 
 else
-	INSTALLPATH=`echo $INSTALLPATH | sed 's,/\$,,'`
+  INSTALLPATH=`echo $INSTALLPATH | sed 's,/\$,,'`
 fi
 
 if [ "x$GLFTPD_SPECIFIC" = "xyes" ]; then
@@ -4547,7 +4623,7 @@ $as_echo "NOTICE: detected glversion, compiling bot binaries for glftpd $glversi
 fi
 
 if [ "x$EBFTPD_SPECIFIC" = "xyes" ]; then
-	USING_EBFTPD="-DUSING_EBFTPD=1"
+  USING_EBFTPD="-DUSING_EBFTPD=1"
 fi
 
 
@@ -5852,7 +5928,7 @@ fi
 if [ ! -f zipscript/conf/zsconfig.h ]; then
     if [ "x$USING_EBFTPD" != "x" ]; then
          cp -i zipscript/conf/zsconfig.h.dist-ebftpd zipscript/conf/zsconfig.h
-				 sed -i s,%INSTALLPATH%,$INSTALLPATH,g zipscript/conf/zsconfig.h
+         sed -i s,%INSTALLPATH%,$INSTALLPATH,g zipscript/conf/zsconfig.h
     elif [ "x$USING_GLFTPD" == "x" ]; then
         cp -i zipscript/conf/zsconfig.h.dist-nonglftpd zipscript/conf/zsconfig.h
     else
