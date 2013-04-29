@@ -95,8 +95,8 @@ create_missing(char *f, struct VARS *raceI)
 	snprintf(fname, NAME_MAX, "%s-missing", f);
 	createzerofile(fname);
 #ifdef USING_EBFTPD
-        if (ebftpd_chown(fname, raceI->user.uid, raceI->user.gid) < 0)
-                d_log("create_missing: ebftpd_chown(%s,%i,%i): %s\n", fname, raceI->user.uid, raceI->user.gid, strerror(errno));
+  if (ebftpd_chown(fname, raceI->user.uid, raceI->user.gid) < 0)
+    d_log("create_missing: ebftpd_chown(%s,%i,%i): %s\n", fname, raceI->user.uid, raceI->user.gid, strerror(errno));
 
 #endif
 }

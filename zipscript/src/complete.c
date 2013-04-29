@@ -13,6 +13,11 @@
 
 #include "complete.h"
 
+#ifdef USING_EBFTPD
+#include "ebftpd.h"
+#endif
+
+
 //extern void	writelog(char *, char *);
 
 /*
@@ -107,6 +112,10 @@ complete(GLOBAL *g, int completetype)
 		}
 		d_log("complete:   - Converting complete.\n");
 		fclose(msgfile);
+#ifdef USING_EBFTPD
+    if (ebftpd_chown(message_file_name, g->v.user.uid, g->v.user.gid) < 0)
+      d_log("create_missing: ebftpd_chown(%s,%i,%i): %s\n", message_file_name, g->v.user.uid, g->v.user.gid, strerror(errno));
+#endif
 	}
 #endif
 
